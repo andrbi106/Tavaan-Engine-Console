@@ -6,19 +6,19 @@ namespace Tavaan\Engine\Console;
 
 final class ConsoleKernel
 {
-    public function handle(/* ... */): mixed
+    public function handle()
     {
         return null;
     }
-    public function call(/* ... */): mixed
+    public function call()
     {
-        return new \Tavaan\Engine\Http\Response(200, "");
+        return null;
     }
-    public function register(/* ... */): mixed
+    public function register(): self
     {
         
     }
-    public function commands(/* ... */): mixed
+    public function commands()
     {
         return null;
     }

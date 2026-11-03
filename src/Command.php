@@ -235,7 +235,7 @@ abstract class Command
         return \in_array($line, $choices, true) ? $line : $default;
     }
 
-    public function progressStart(/* ... */): mixed
+    public function progressStart()
     {
         return null;
     }
