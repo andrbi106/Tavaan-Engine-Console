@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Console\Input;
 
-use Tavaan\Core\Contracts\Console\InputInterface;
+use Tavaan\Engine\Console\Contracts\InputInterface;
 
 /**
  * تَوان | Tavaan — Console
