@@ -12,11 +12,11 @@ final class ConsoleKernel
     }
     public function call(/* ... */): mixed
     {
-        return null;
+        return new \Tavaan\Engine\Http\Response(200, "");
     }
     public function register(/* ... */): mixed
     {
-        return null;
+        
     }
     public function commands(/* ... */): mixed
     {
