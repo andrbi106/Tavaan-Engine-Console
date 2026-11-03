@@ -15,7 +15,7 @@ use Tavaan\Engine\Console\Command;
  */
 final class ConsoleScenarioTest extends TestCase
 {
-    public function t01_register_command(): void
+    public function test_t01_register_command(): void
     {
         // Scenario T-01
 $kernel = new ConsoleKernel();
@@ -27,7 +27,7 @@ $kernel = new ConsoleKernel();
         $kernel->register($cmd);
         $this->assertContains("test:hello", $kernel->commands());
     }
-    public function t02_call_returns_exit_code(): void
+    public function test_t02_call_returns_exit_code(): void
     {
         // Scenario T-02
 $kernel = new ConsoleKernel();
@@ -40,7 +40,7 @@ $kernel = new ConsoleKernel();
         $exit = $kernel->call("test:ok", []);
         $this->assertSame(0, $exit);
     }
-    public function t03_call_unknown_returns_nonzero(): void
+    public function test_t03_call_unknown_returns_nonzero(): void
     {
         // Scenario T-03
 $kernel = new ConsoleKernel();
