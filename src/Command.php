@@ -4,128 +4,230 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Console;
 
-use Tavaan\Core\Contracts\Config\RepositoryInterface as Config;
-
 /**
- * Command — پیاده‌سازی اصلی موتور.
+ * Command — کلاس پایه برای commandهای CLI.
  *
- * @see \Tavaan\Engine\Console\Contracts\CommandInterface
+ * @see docs/03-engines/console.md
  */
-final class Command implements Contracts\CommandInterface
+abstract class Command
 {
-    /**
-     * @param Config $config پیکربندی موتور
-     */
-    public function __construct(
-        private readonly Config $config,
-    ) {
+    /** @var array<string, mixed> */
+    private array $arguments = [];
+
+    /** @var array<string, mixed> */
+    private array $options = [];
+
+    /** @var array<string, callable> */
+    private array $handlers = [];
+
+    /** @var list<string> */
+    private array $allowedArgs = [];
+
+    /** @var list<string> */
+    private array $allowedOptions = [];
+
+    protected const SUCCESS = 0;
+    protected const FAILURE = 1;
+
+    public function name(): string
+    {
+        return static::NAME ?? '';
+    }
+
+    public function description(): string
+    {
+        return static::DESCRIPTION ?? '';
     }
 
     /**
-     * {@inheritdoc}
+     * @param array<string, mixed> $arguments
+     * @param array<string, mixed> $options
      */
-    public function handle(/* ... */): mixed
+    public function configure(array $arguments, array $options): void
     {
-        // TODO: پیاده‌سازی handle مطابق مستندات (سند §3 API).
-        return null;
+        $this->arguments = $arguments;
+        $this->options = $options;
+    }
+
+    public function argument(string $name, mixed $default = null): mixed
+    {
+        return $this->arguments[$name] ?? $default;
+    }
+
+    public function option(string $name, mixed $default = null): mixed
+    {
+        return $this->options[$name] ?? $default;
+    }
+
+    public function hasOption(string $name): bool
+    {
+        return \array_key_exists($name, $this->options);
+    }
+
+    public function hasArgument(string $name): bool
+    {
+        return \array_key_exists($name, $this->arguments);
     }
 
     /**
-     * {@inheritdoc}
+     * @return array<string, mixed>
      */
-    public function argument(/* ... */): mixed
+    public function arguments(): array
     {
-        // TODO: پیاده‌سازی argument مطابق مستندات (سند §3 API).
-        return null;
+        return $this->arguments;
     }
 
     /**
-     * {@inheritdoc}
+     * @return array<string, mixed>
      */
-    public function option(/* ... */): mixed
+    public function options(): array
     {
-        // TODO: پیاده‌سازی option مطابق مستندات (سند §3 API).
-        return null;
+        return $this->options;
     }
 
     /**
-     * {@inheritdoc}
+     * @param array<string, mixed> $args
+     * @param array<string, mixed> $options
      */
-    public function info(/* ... */): mixed
+    public function run(array $args = [], array $options = []): int
     {
-        // TODO: پیاده‌سازی info مطابق مستندات (سند §3 API).
-        return null;
+        $this->configure($args, $options);
+        return $this->handle();
+    }
+
+    abstract public function handle(): int;
+
+    // === Output methods ===
+
+    public function info(string $message): void
+    {
+        $this->line("\033[32m{$message}\033[0m");
+    }
+
+    public function error(string $message): void
+    {
+        $this->line("\033[31m{$message}\033[0m");
+    }
+
+    public function warn(string $message): void
+    {
+        $this->line("\033[33m{$message}\033[0m");
+    }
+
+    public function comment(string $message): void
+    {
+        $this->line("\033[90m{$message}\033[0m");
+    }
+
+    public function line(string $message = ''): void
+    {
+        echo $message . "\n";
+    }
+
+    public function newLine(int $count = 1): void
+    {
+        echo \str_repeat("\n", $count);
+    }
+
+    public function alert(string $message): void
+    {
+        $this->newLine();
+        $this->line(\str_repeat('!', \strlen($message) + 4));
+        $this->line('! ' . $message . ' !');
+        $this->line(\str_repeat('!', \strlen($message) + 4));
+        $this->newLine();
     }
 
     /**
-     * {@inheritdoc}
+     * @param list<string> $headers
+     * @param list<list<string>> $rows
      */
-    public function error(/* ... */): mixed
+    public function table(array $headers, array $rows): void
     {
-        // TODO: پیاده‌سازی error مطابق مستندات (سند §3 API).
-        return null;
+        $widths = [];
+        foreach ($headers as $i => $h) {
+            $widths[$i] = \strlen($h);
+        }
+        foreach ($rows as $row) {
+            foreach ($row as $i => $cell) {
+                $widths[$i] = \max($widths[$i] ?? 0, \strlen((string) $cell));
+            }
+        }
+        // Headers
+        $this->printRow($headers, $widths);
+        $this->line(\str_repeat('-', \array_sum($widths) + \count($widths) * 3 + 1));
+        // Rows
+        foreach ($rows as $row) {
+            $this->printRow($row, $widths);
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @param list<string> $row
+     * @param list<int> $widths
      */
-    public function warn(/* ... */): mixed
+    private function printRow(array $row, array $widths): void
     {
-        // TODO: پیاده‌سازی warn مطابق مستندات (سند §3 API).
-        return null;
+        $cells = [];
+        foreach ($row as $i => $cell) {
+            $cells[] = \str_pad((string) $cell, $widths[$i] ?? 0);
+        }
+        $this->line('| ' . \implode(' | ', $cells) . ' |');
+    }
+
+    // === Input methods ===
+
+    public function ask(string $question, ?string $default = null): ?string
+    {
+        $defaultStr = $default !== null ? " [{$default}]" : '';
+        echo "{$question}{$defaultStr}: ";
+        $line = \fgets(\STDIN);
+        $line = $line === false ? '' : \trim($line);
+        return $line === '' ? $default : $line;
+    }
+
+    public function secret(string $question): ?string
+    {
+        echo "{$question}: ";
+        // Hide input — system-specific; fall back to plain
+        if (\PHP_OS_FAMILY === 'Linux' || \PHP_OS_FAMILY === 'Darwin') {
+            \system('stty -echo');
+        }
+        $line = \fgets(\STDIN);
+        if (\PHP_OS_FAMILY === 'Linux' || \PHP_OS_FAMILY === 'Darwin') {
+            \system('stty echo');
+        }
+        echo "\n";
+        return $line === false ? null : \trim($line);
+    }
+
+    public function confirm(string $question, bool $default = false): bool
+    {
+        $defaultStr = $default ? 'Y/n' : 'y/N';
+        echo "{$question} ({$defaultStr}): ";
+        $line = \fgets(\STDIN);
+        $line = $line === false ? '' : \strtolower(\trim($line));
+        if ($line === '') return $default;
+        return \in_array($line, ['y', 'yes'], true);
     }
 
     /**
-     * {@inheritdoc}
+     * @param list<string> $choices
      */
-    public function line(/* ... */): mixed
+    public function choice(string $question, array $choices, ?string $default = null): ?string
     {
-        // TODO: پیاده‌سازی line مطابق مستندات (سند §3 API).
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function table(/* ... */): mixed
-    {
-        // TODO: پیاده‌سازی table مطابق مستندات (سند §3 API).
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function ask(/* ... */): mixed
-    {
-        // TODO: پیاده‌سازی ask مطابق مستندات (سند §3 API).
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function confirm(/* ... */): mixed
-    {
-        // TODO: پیاده‌سازی confirm مطابق مستندات (سند §3 API).
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function choice(/* ... */): mixed
-    {
-        // TODO: پیاده‌سازی choice مطابق مستندات (سند §3 API).
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function progressStart(/* ... */): mixed
-    {
-        // TODO: پیاده‌سازی progressStart مطابق مستندات (سند §3 API).
-        return null;
+        foreach ($choices as $i => $c) {
+            echo "  [{$i}] {$c}\n";
+        }
+        $defaultIdx = $default !== null ? \array_search($default, $choices, true) : false;
+        $defaultStr = $defaultIdx !== false ? " [{$defaultIdx}]" : '';
+        echo "{$question}{$defaultStr}: ";
+        $line = \fgets(\STDIN);
+        $line = $line === false ? '' : \trim($line);
+        if ($line === '') return $default;
+        if (\is_numeric($line) && isset($choices[(int) $line])) {
+            return $choices[(int) $line];
+        }
+        return \in_array($line, $choices, true) ? $line : $default;
     }
 }

@@ -11,33 +11,17 @@
     }
   },
   "providers": [
-    "Tavaan\\Engine\\Console\\CommandServiceProvider"
+    "Tavaan\\Engine\\Console\\ConsoleServiceProvider"
   ],
   "requires": {
     "php": ">=8.2",
-    "engines": [
-      "container",
-      "config"
-    ]
-  },
-  "soft_requires": {
-    "engines": [
-      "event"
-    ]
+    "engines": ["container", "config"]
   },
   "config": {
     "file": "config/console.php",
     "key": "console"
   },
   "tables": [],
-  "commands": [
-    "list",
-    "about",
-    "version",
-    "env",
-    "doctor",
-    "optimize",
-    "test"
-  ],
+  "commands": [],
   "docs": "docs/03-engines/console.md"
 }

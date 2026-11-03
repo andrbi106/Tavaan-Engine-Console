@@ -2,29 +2,17 @@
 
 declare(strict_types=1);
 
-/*|--------------------------------------------------------------------------
- | Console Engine Configuration
- |--------------------------------------------------------------------------
- |
- | پیکربندی موتور console — همهٔ کلیدهای مستندشده در `docs/03-engines/console.md` بخش «پیکربندی».
- |
- |@see https://github.com/Derogaramin/Tavaan-Doc/blob/main/docs/03-engines/console.md
- */
-
 return [
-    /*| پیش‌فرض موتور (driver/store یا حالت فعال) */
-    'default' => env('CONSOLE_DEFAULT', 'default'),
-
-    /*| کلید کش (در صورت استفاده) */
-    'prefix' => env('CONSOLE_PREFIX', 'console:'),
-
-    /*| تنظیمات لاگ */
-    'log' => [
-        'channel' => env('CONSOLE_LOG_CHANNEL', 'console'),
+    /*| مسیر commandهای خودکشف */
+    'paths' => [
+        \getenv('TVN_CONSOLE_PATH') !== false ? \getenv('TVN_CONSOLE_PATH') : 'src/Console',
     ],
 
-    /*| سایر کلیدها (طبق مستندات) */
-    'options' => [
-        // TODO: کلیدهای اضافی طبق سند §۶ (پیکربندی)
-    ],
+    /*| رنگ‌ها در خروجی */
+    'colors' => true,
+
+    /*| حالت verbose پیش‌فرض */
+    'verbose' => \getenv('TVN_VERBOSE') !== false
+        ? \filter_var(\getenv('TVN_VERBOSE'), \FILTER_VALIDATE_BOOL)
+        : false,
 ];

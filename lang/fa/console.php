@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-/*| پیام‌های fa برای موتور console */
-
 return [
-    'error_default' => 'خطای ناشناخته (console)',
-    'not_configured' => 'موتور پیکربندی نشده است (console)',
+    'error_command_not_found' => 'دستور «{0}» یافت نشد.',
+    'error_argument_required' => 'آرگومان «{0}» اجباری است.',
+    'help_available' => 'دستورات موجود:',
 ];

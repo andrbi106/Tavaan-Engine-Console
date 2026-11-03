@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-/*| پیام‌های en برای موتور console */
-
 return [
-    'error_default' => 'Unknown error (console)',
-    'not_configured' => 'Engine not configured (console)',
+    'error_command_not_found' => 'Command "{0}" not found.',
+    'error_argument_required' => 'Argument "{0}" is required.',
+    'help_available' => 'Available commands:',
 ];
