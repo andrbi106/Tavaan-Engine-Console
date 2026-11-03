@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Console\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Tavaan\Testing\TestCase;
 use Tavaan\Engine\Console\Application;
 use Tavaan\Engine\Console\ArgvParser;
 use Tavaan\Engine\Console\SignatureParser;
