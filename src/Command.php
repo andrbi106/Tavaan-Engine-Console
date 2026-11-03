@@ -235,8 +235,36 @@ abstract class Command
         return \in_array($line, $choices, true) ? $line : $default;
     }
 
-    public function progressStart()
+    public function progressStart(int $total = 100): void
     {
-        return null;
+        $this->progressTotal = $total;
+        $this->progressCurrent = 0;
+        $this->progressStartTime = microtime(true);
+        echo "  0/{$total} (  0%)";
     }
+
+    public function progressAdvance(int $step = 1): void
+    {
+        $this->progressCurrent = min($this->progressTotal, ($this->progressCurrent ?? 0) + $step);
+        $pct = $this->progressTotal > 0 ? (int) round(($this->progressCurrent / $this->progressTotal) * 100) : 100;
+        echo "\r  {$this->progressCurrent}/{$this->progressTotal} ({$pct}%)   ";
+        if ($this->progressCurrent >= $this->progressTotal) {
+            echo "\n";
+        }
+    }
+
+    public function progressFinish(): void
+    {
+        if (isset($this->progressTotal) && ($this->progressCurrent ?? 0) < $this->progressTotal) {
+            $this->progressCurrent = $this->progressTotal;
+            echo "\r  {$this->progressTotal}/{$this->progressTotal} (100%)\n";
+        }
+    }
+
+    /** @var int */
+    private int $progressTotal = 0;
+    /** @var int */
+    private int $progressCurrent = 0;
+    /** @var float */
+    private float $progressStartTime = 0.0;
 }
