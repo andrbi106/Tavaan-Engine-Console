@@ -2,26 +2,29 @@
 
 declare(strict_types=1);
 
-/*
- * پیکربندی موتور Console — DOC-076
+/*|--------------------------------------------------------------------------
+ | Console Engine Configuration
+ |--------------------------------------------------------------------------
+ |
+ | پیکربندی موتور console — همهٔ کلیدهای مستندشده در `docs/03-engines/console.md` بخش «پیکربندی».
+ |
+ |@see https://github.com/Derogaramin/Tavaan-Doc/blob/main/docs/03-engines/console.md
  */
 
 return [
-    // دستورات افزودهٔ اپلیکیشن (علاوه بر built-inها و discovery)
-    'commands' => [],
+    /*| پیش‌فرض موتور (driver/store یا حالت فعال) */
+    'default' => env('CONSOLE_DEFAULT', 'default'),
 
-    // مسیرهای discovery اضافی
-    'paths' => [],
+    /*| کلید کش (در صورت استفاده) */
+    'prefix' => env('CONSOLE_PREFIX', 'console:'),
 
-    // کش discovery دستورها
-    'cache' => [
-        'enabled' => env_bool('TVN_CONSOLE_CACHE', false),
-        'file'    => storage_path('cache/commands.php'),
+    /*| تنظیمات لاگ */
+    'log' => [
+        'channel' => env('CONSOLE_LOG_CHANNEL', 'console'),
     ],
 
-    'exit_codes' => [
-        'success' => 0,
-        'failure' => 1,
-        'invalid' => 2,
+    /*| سایر کلیدها (طبق مستندات) */
+    'options' => [
+        // TODO: کلیدهای اضافی طبق سند §۶ (پیکربندی)
     ],
 ];
