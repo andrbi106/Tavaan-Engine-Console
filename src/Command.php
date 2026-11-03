@@ -121,12 +121,14 @@ abstract class Command
 
     public function line(string $message = ''): void
     {
-        echo $message . "\n";
+        echo $message . "
+";
     }
 
     public function newLine(int $count = 1): void
     {
-        echo \str_repeat("\n", $count);
+        echo \str_repeat("
+", $count);
     }
 
     public function alert(string $message): void
@@ -197,7 +199,8 @@ abstract class Command
         if (\PHP_OS_FAMILY === 'Linux' || \PHP_OS_FAMILY === 'Darwin') {
             \system('stty echo');
         }
-        echo "\n";
+        echo "
+";
         return $line === false ? null : \trim($line);
     }
 
@@ -217,7 +220,8 @@ abstract class Command
     public function choice(string $question, array $choices, ?string $default = null): ?string
     {
         foreach ($choices as $i => $c) {
-            echo "  [{$i}] {$c}\n";
+            echo "  [{$i}] {$c}
+";
         }
         $defaultIdx = $default !== null ? \array_search($default, $choices, true) : false;
         $defaultStr = $defaultIdx !== false ? " [{$defaultIdx}]" : '';

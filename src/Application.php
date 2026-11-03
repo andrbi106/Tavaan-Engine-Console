@@ -55,10 +55,12 @@ final class Application
 
     public function printHelp(): void
     {
-        echo "Available commands:\n";
+        echo "Available commands:
+";
         foreach ($this->commands as $name => $command) {
             $desc = $command->description();
-            echo "  {$name}" . ($desc !== '' ? " — {$desc}" : '') . "\n";
+            echo "  {$name}" . ($desc !== '' ? " — {$desc}" : '') . "
+";
         }
     }
 }
