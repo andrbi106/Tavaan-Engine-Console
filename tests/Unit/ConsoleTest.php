@@ -251,7 +251,7 @@ final class ConsoleTest extends TestCase
     }
 }
 
-final class TestCommand extends Command
+final class TestCommandStub extends Command
 {
     protected const NAME = 'test:cmd';
     protected const DESCRIPTION = 'A test command';
