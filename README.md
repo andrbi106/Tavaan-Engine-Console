@@ -2,6 +2,8 @@
 
 > **چارچوب CLI** — موتور Console در فریمورک تَوان
 
+این موتور از کلاس پایهٔ `Engine` (در [Tavaan-Engine-Core](https://github.com/andrbi106/Tavaan-Engine-Core)) ارث می‌برد.
+
 ## مشخصات
 
 | فیلد | مقدار |
@@ -11,74 +13,60 @@
 | عنوان فارسی | چارچوب CLI |
 | نسخه | `0.1.0` |
 | namespace | `Tavaan\Engine\Console` |
-| نوع | `engine` |
+| کلاس موتور | `Tavaan\Engine\Console\ConsoleEngine` |
+| Facade |  |
 
-## قراردادها (Contracts)
+## کلاس موتور
 
-این موتور قراردادهای زیر را ارائه می‌دهد:
+```php
+namespace Tavaan\Engine\Console;
 
-- `Tavaan\Engine\Console\Contracts\CommandInterface`
-- `Tavaan\Engine\Console\Contracts\InputInterface`
-- `Tavaan\Engine\Console\Contracts\KernelInterface`
-- `Tavaan\Engine\Console\Contracts\OutputInterface`
+use Tavaan\EngineCore\Engine as BaseEngine;
+use Tavaan\EngineCore\Contracts\EngineManifestInterface;
 
-## کلاس‌های اصلی
+final class ConsoleEngine extends BaseEngine
+{
+    public function __construct(EngineManifestInterface $manifest)
+    {
+        parent::__construct($manifest);
+    }
 
-- `src/Application.php`
-- `src/ArgvParser.php`
-- `src/Command.php`
-- `src/Commands/AboutCommand.php`
-- `src/Commands/ArchCheckCommand.php`
-- `src/Commands/AutoloadCacheCommand.php`
-- `src/Commands/BenchAllCommand.php`
-- `src/Commands/ConfigCacheCommand.php`
-- `src/Commands/ConfigClearCommand.php`
-- `src/Commands/DoctorCommand.php`
-- `src/Commands/DownCommand.php`
-- `src/Commands/EngineValidateCommand.php`
-- `src/Commands/EnvCheckCommand.php`
-- `src/Commands/EnvCommand.php`
-- `src/Commands/EventListCommand.php`
-- `src/Commands/LintPhpCommand.php`
-- `src/Commands/ModuleDisableCommand.php`
-- `src/Commands/ModuleEnableCommand.php`
-- `src/Commands/ModuleListCommand.php`
-- `src/Commands/ModuleValidateCommand.php`
-- ... و 13 فایل دیگر
+    public function register(ContainerInterface $container): void
+    {
+        parent::register($container);
+        // bindingهای اختصاصی موتور
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+    }
+}
+```
+
+**فایل:** `src/ConsoleEngine.php`
+
+## وابستگی‌ها
+
+**موتورهای مورد‌نیاز:** `container`, `config`
 
 ## Service Providerها
 
 - `Tavaan\Engine\Console\ConsoleServiceProvider`
 
-## وابستگی‌ها
+## سه درگاه ارتباط با سایر موتورها
 
-**موتورهای مورد‌نیاز:**
-
-- `container`
-- `config`
-
-## پیکربندی
-
-- فایل پیکربندی: `config/console.php`
-- کلید: `console`
+| درگاه | الگو | متدهای convenience |
+|---|---|---|
+| Container | pull-based DI | `make()`, `bound()` |
+| Events | pub/sub | `dispatch()`, `listen()` |
+| EngineBus | point-to-point RPC | `call()`, `offer()` |
 
 ## نصب
 
 ```bash
 git clone https://github.com/andrbi106/Tavaan-Engine-Console.git
 ```
-
-این موتور بخشی از فریمورک تَوان است و معمولاً به‌صورت مستقیم نصب نمی‌شود،
-بلکه توسط [Tavaan-Core](https://github.com/andrbi106/Tavaan-Core) مدیریت می‌شود.
-
-## روابط با سایر مخازن
-
-| مخزن | نقش |
-|---|---|
-| **`andrbi106/Tavaan-Engine-Console`** (این مخزن) | موتور Console |
-| `andrbi106/Tavaan-Engine-Core` | ساختار پایه + درگاه ارتباط موتورها |
-| `andrbi106/Tavaan-Core` | اسکلت اپلیکیشن + همهٔ موتورها |
-| `Derogaramin/Tavaan-Framework` | فریمورک مادر (monorepo) |
 
 ## مجوز
 

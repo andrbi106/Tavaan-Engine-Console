@@ -15,7 +15,10 @@
   ],
   "requires": {
     "php": ">=8.2",
-    "engines": ["container", "config"]
+    "engines": [
+      "container",
+      "config"
+    ]
   },
   "config": {
     "file": "config/console.php",
@@ -23,5 +26,6 @@
   },
   "tables": [],
   "commands": [],
-  "docs": "docs/03-engines/console.md"
+  "docs": "docs/03-engines/console.md",
+  "class": "Tavaan\\Engine\\Console\\ConsoleEngine"
 }
